@@ -2,7 +2,6 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -12,7 +11,7 @@ export default function Home() {
     if (status === "authenticated") {
       return (
         <div className="flex flex-col items-center gap-4">
-          <img src={session?.user?.image} alt="profile" className="rounded-full w-20 h-20" />
+          <img src={session?.user?.image ?? ""} alt="profile" className="rounded-full w-20 h-20" />
           <h2>Bienvenido {session?.user?.name}</h2>
           
           <button
