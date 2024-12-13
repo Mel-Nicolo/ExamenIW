@@ -34,7 +34,7 @@ export default function Home() {
   const searchEmail = searchParams.get('email');
 
     useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && session?.user?.email) {
       if (searchEmail && searchEmail !== session?.user?.email) {
         // Si estamos visitando la página de otro usuario, registrar la visita
         registerVisit(searchEmail, session?.user?.email);
