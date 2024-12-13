@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import Event from "@/models/Event";
 import { NextResponse } from "next/server";
+import { useRouter } from 'next/router'
+
 
 interface RouteContext {
   params: {
@@ -14,7 +16,8 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     await connectDB();
-    const event = await Event.findById(params.id);
+    const router = useRouter();
+    const event = await Event.findById(router.query._id);
 
     if (!event) {
       return NextResponse.json(
