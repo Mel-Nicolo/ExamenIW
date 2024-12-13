@@ -24,7 +24,7 @@ interface LoginLog {
   pageOwner: string;
 }
 
-export default function Home() {
+function HomeContent() {
   const { data: session, status } = useSession();
   const [markers, setMarkers] = useState<Event[]>([]);
   const [logs, setLogs] = useState<LoginLog[]>([]);
@@ -33,21 +33,23 @@ export default function Home() {
   const searchParams = useSearchParams();
   const searchEmail = searchParams.get('email');
 
-    useEffect(() => {
+  useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       if (searchEmail && searchEmail !== session?.user?.email) {
-        // Si estamos visitando la página de otro usuario, registrar la visita
-        registerVisit(searchEmail, session?.user?.email);
+        registerVisit(searchEmail, session.user.email);
         fetchUserMarkers(searchEmail);
         fetchUserLogs(searchEmail);
       } else if (session.user?.email) {
         fetchUserMarkers(session.user.email);
         fetchUserLogs(session.user.email);
       }
+    } else if (status === "unauthenticated") {
+      setMarkers([]);
+      setLogs([]);
+      setLocation(null);
     }
   }, [status, session, searchEmail]);
-  
-  // Función para registrar la visita
+
   const registerVisit = async (pageOwner: string, visitor: string) => {
     try {
       const response = await fetch('/api/log', {
@@ -117,7 +119,6 @@ export default function Home() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
     <main className="flex min-h-screen flex-col items-center p-8">
       {showSession()}
 
@@ -174,6 +175,13 @@ export default function Home() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
     </Suspense>
   );
 }
