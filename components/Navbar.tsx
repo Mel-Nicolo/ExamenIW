@@ -24,11 +24,11 @@ export default function Navbar() {
               >
                 Logout
               </button>
-              <span className="text-white">{session.user?.name}</span>
+              <span className="text-white">{session!.user?.name}</span>
               {session.user?.image && (
                 <img
-                  src={session.user.image}
-                  alt={session.user.name}
+                  src={session!.user!.image}
+                  alt={session.user.name || "User Avatar"}
                   className="w-8 h-8 rounded-full"
                 />
               )}
