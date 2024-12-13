@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
 interface Event {
   _id: string;
@@ -21,6 +24,7 @@ export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
 
 
   const searchEvents = async () => {
@@ -33,6 +37,7 @@ export default function Home() {
 
       if (geocodeData && geocodeData.length > 0) {
         const { lat, lon } = geocodeData[0];
+        setLocation({ lat, lon });
         const response = await fetch(`/api/event?lat=${lat}&lon=${lon}`);
         if (!response.ok) throw new Error('Error al cargar los eventos');
         
@@ -48,13 +53,14 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
+
       <div className="w-full max-w-xl mb-8">
         <div className="flex gap-2">
           <input
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Introduce una dirección"
+            placeholder="Introduce una direcciÃ³n"
             className="flex-1 p-2 border rounded"
           />
           <button
@@ -66,6 +72,12 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {location && (
+        <div className="w-full max-w-7xl mb-8">
+          <Map location={location} eventos={events} />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
         {events.map((event) => (

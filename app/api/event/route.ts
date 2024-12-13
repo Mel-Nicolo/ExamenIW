@@ -1,12 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Event from "@/models/Event";
 import { connectDB } from "@/lib/mongodb";
 import cloudinary from "@/lib/cloudinary";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const lat = searchParams.get("lat");
+    const lon = searchParams.get("lon");
+
     await connectDB();
-    const eventos = await Event.find({});
+
+    if (lat && lon) {
+      // Búsqueda por proximidad (0.2 unidades de distancia)
+      const eventos = await Event.find({
+        lat: { $gte: Number(lat) - 0.2, $lte: Number(lat) + 0.2 },
+        lon: { $gte: Number(lon) - 0.2, $lte: Number(lon) + 0.2 },
+      }).sort({ timestamp: 1 });
+      
+      return NextResponse.json(eventos);
+    }
+
+    // Si no hay coordenadas, devuelve todos los eventos
+    const eventos = await Event.find({}).sort({ timestamp: 1 });
     return NextResponse.json(eventos);
   } catch (error) {
     console.error("Error al obtener eventos:", error);
@@ -19,12 +37,19 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Debes iniciar sesión para crear eventos" },
+        { status: 401 }
+      );
+    }
+
     await connectDB();
     const formData = await req.formData();
     const nombre = formData.get("nombre") as string;
     const timestamp = formData.get("timestamp") as string;
     const lugar = formData.get("lugar") as string;
-    const organizador = formData.get("organizador") as string;
     const imagen = formData.get("imagen") as File;
 
     if (!imagen) {
@@ -71,14 +96,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Crear el evento con la latitud y longitud obtenidas
+    // Crear el evento usando el email del usuario autenticado
     const evento = new Event({
       nombre,
       timestamp,
       lugar,
       lat,
       lon,
-      organizador,
+      organizador: session.user.email,
       imagen: imagenUrl,
     });
 

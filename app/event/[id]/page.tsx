@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { use } from 'react';
+import dynamic from "next/dynamic";
 
-interface Event {
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
+
+interface Evento {
   _id: string;
   nombre: string;
   timestamp: string;
@@ -17,7 +20,7 @@ interface Event {
   imagen: string;
 }
 
-async function getEvent(id: string): Promise<Event> {
+async function getEvento(id: string): Promise<Evento> {
   const res = await fetch(`/api/event/${id}`, {
     cache: 'no-store'
   });
@@ -29,17 +32,17 @@ async function getEvent(id: string): Promise<Event> {
   return res.json();
 }
 
-export default function EventDetalle({ params }: { params: Promise<{ id: string }> }) {
+export default function EventoDetalle({ params }: { params: Promise<{ id: string }> }) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [event, setEvent] = useState<Event | null>(null);
+  const [evento, setEvento] = useState<Evento | null>(null);
   const [error, setError] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
   const { id } = use(params);
 
   useEffect(() => {
-    getEvent(id)
-      .then(setEvent)
+    getEvento(id)
+      .then(setEvento)
       .catch(err => setError(err.message));
   }, [id]);
 
@@ -72,7 +75,7 @@ export default function EventDetalle({ params }: { params: Promise<{ id: string 
     return <div className="p-8 text-red-500">{error}</div>;
   }
 
-  if (!event) {
+  if (!evento) {
     return <div className="p-8">Cargando...</div>;
   }
 
@@ -83,23 +86,27 @@ export default function EventDetalle({ params }: { params: Promise<{ id: string 
           ← Volver
         </Link>
         
-        <h1 className="text-2xl font-bold mb-4">{event.nombre}</h1>
+        <h1 className="text-2xl font-bold mb-4">{evento.nombre}</h1>
         
         <div className="mb-8">
           <img 
-            src={event.imagen} 
-            alt={event.nombre}
+            src={evento.imagen} 
+            alt={evento.nombre}
             className="w-full h-64 object-cover rounded"
           />
         </div>
 
         <div className="grid gap-4 mb-8">
-          <p><strong>Fecha:</strong> {new Date(event.timestamp).toLocaleString()}</p>
-          <p><strong>Lugar:</strong> {event.lugar}</p>
-          <p><strong>Organizador:</strong> {event.organizador}</p>
+          <p><strong>Fecha:</strong> {new Date(evento.timestamp).toLocaleString()}</p>
+          <p><strong>Lugar:</strong> {evento.lugar}</p>
+          <p><strong>Organizador:</strong> {evento.organizador}</p>
         </div>
 
-        {session?.user?.email === event.organizador && (
+        <div className="mb-8">
+          <Map location={{ lat: evento.lat, lon: evento.lon }} eventos={[evento]} />
+        </div>
+
+        {session?.user?.email === evento.organizador && (
           <button
             onClick={handleDelete}
             disabled={isDeleting}
