@@ -1,9 +1,9 @@
 import { connectDB } from "@/lib/mongodb";
 import Event from "@/models/Event";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
