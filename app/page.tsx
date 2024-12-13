@@ -35,7 +35,7 @@ export default function Home() {
 
     useEffect(() => {
     if (status === "authenticated") {
-      if (searchEmail && searchEmail !== session.user.email) {
+      if (searchEmail && searchEmail !== session?.user?.email) {
         // Si estamos visitando la página de otro usuario, registrar la visita
         registerVisit(searchEmail, session.user.email);
         fetchUserMarkers(searchEmail);
