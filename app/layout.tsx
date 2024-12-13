@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Provider } from "./provider";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,13 +18,8 @@ export default function RootLayout({
     <html lang="es">
       <Provider>
         <body className="relative min-h-screen">
+          <Navbar />
           {children}
-          <Link
-            href="/logs"
-            className="fixed bottom-4 right-4 border border-solid border-black rounded px-4 py-2 bg-white hover:bg-gray-100"
-          >
-            Logs
-          </Link>
         </body>
       </Provider>
     </html>

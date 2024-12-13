@@ -22,39 +22,6 @@ export default function Home() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const showSession = () => {
-    if (status === "authenticated") {
-      return (
-        <div className="flex flex-col items-center gap-4 mb-8">
-          <h2>Bienvenido {session?.user?.name}</h2>
-          <img src={session?.user?.image ?? undefined} alt={session?.user?.name ?? ""} className="w-20 h-20 rounded-full" />
-          <button
-            className="border border-solid border-black rounded px-4 py-2"
-            onClick={() => {
-              signOut({ redirect: false }).then(() => {
-                router.push("/");
-              });
-            }}
-          >
-            Sign Out
-          </button>
-        </div>
-      )
-    } else if (status === "loading") {
-      return (
-        <span className="text-[#888] text-sm mt-7">Loading...</span>
-      )
-    } else {
-      return (
-        <Link
-          href="/login"
-          className="border border-solid border-black rounded px-4 py-2 mb-8"
-        >
-          Sign In
-        </Link>
-      )
-    }
-  }
 
   const searchEvents = async () => {
     try {
@@ -81,8 +48,6 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
-      {showSession()}
-
       <div className="w-full max-w-xl mb-8">
         <div className="flex gap-2">
           <input
