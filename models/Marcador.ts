@@ -1,13 +1,9 @@
 import mongoose from "mongoose";
 
-const EventoSchema = new mongoose.Schema(
+const MarcadorSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
-      required: true,
-    },
-    timestamp: {
-      type: Date,
       required: true,
     },
     lugar: {
@@ -22,7 +18,7 @@ const EventoSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    organizador: {
+    creador: {
       type: String,
       required: true,
     },
@@ -37,7 +33,7 @@ const EventoSchema = new mongoose.Schema(
   }
 );
 
-const Evento =
-  mongoose.models?.Evento || mongoose.model("Evento", EventoSchema);
+const Marcador =
+  mongoose.models?.Marcador || mongoose.model("Marcador", MarcadorSchema);
 
-export default Evento;
+export default Marcador;

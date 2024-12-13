@@ -4,7 +4,6 @@ import type { NextAuthOptions } from "next-auth";
 import credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
-import Log from "@/models/Log";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -57,25 +56,6 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user }) {
-      try {
-        // Crear registro del login
-        const expiryDate = new Date();
-        expiryDate.setHours(expiryDate.getHours() + 24); // Token válido por 24h
-
-        const loginLog = new Log({
-          userEmail: user.email,
-          expiryTimestamp: expiryDate,
-          token: user.id // O puedes generar un token único
-        });
-
-        await loginLog.save();
-        return true;
-      } catch (error) {
-        console.error("Error al registrar login:", error);
-        return true; // Permitir login aunque falle el registro
-      }
-    },
     async redirect({ url, baseUrl }) {
       return baseUrl;
     },

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Evento from "@/models/Evento";
+import Marcador from "@/models/Marcador";
 import { connectDB } from "@/lib/mongodb";
 import cloudinary from "@/lib/cloudinary";
 import { getServerSession } from "next-auth";
@@ -8,28 +8,21 @@ import { authOptions } from "@/lib/auth";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const lat = searchParams.get("lat");
-    const lon = searchParams.get("lon");
+    const creador = searchParams.get("creador");
 
     await connectDB();
 
-    if (lat && lon) {
-      // Búsqueda por proximidad (0.2 unidades de distancia)
-      const eventos = await Evento.find({
-        lat: { $gte: Number(lat) - 0.2, $lte: Number(lat) + 0.2 },
-        lon: { $gte: Number(lon) - 0.2, $lte: Number(lon) + 0.2 },
-      }).sort({ timestamp: 1 });
-      
-      return NextResponse.json(eventos);
+    if (creador) {
+      const marcadores = await Marcador.find({ creador });
+      return NextResponse.json(marcadores);
     }
 
-    // Si no hay coordenadas, devuelve todos los eventos
-    const eventos = await Evento.find({}).sort({ timestamp: 1 });
-    return NextResponse.json(eventos);
+    // Si no hay creador, devolvemos un array vacio
+    return NextResponse.json([]);
   } catch (error) {
-    console.error("Error al obtener eventos:", error);
+    console.error("Error al obtener los marcadores:", error);
     return NextResponse.json(
-      { error: "Error al obtener eventos" },
+      { error: "Error al obtener marcador" },
       { status: 500 }
     );
   }
@@ -40,7 +33,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json(
-        { error: "Debes iniciar sesión para crear eventos" },
+        { error: "Debes iniciar sesión para crear marcadores" },
         { status: 401 }
       );
     }
@@ -48,7 +41,6 @@ export async function POST(req: Request) {
     await connectDB();
     const formData = await req.formData();
     const nombre = formData.get("nombre") as string;
-    const timestamp = formData.get("timestamp") as string;
     const lugar = formData.get("lugar") as string;
     const imagen = formData.get("imagen") as File;
 
@@ -96,23 +88,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // Crear el evento usando el email del usuario autenticado
-    const evento = new Evento({
+    // Crear el marcador usando el email del usuario autenticado
+    const marcador = new Marcador({
       nombre,
-      timestamp,
       lugar,
       lat,
       lon,
-      organizador: session.user.email,
+      creador: session.user.email,
       imagen: imagenUrl,
     });
 
-    await evento.save();
-    return NextResponse.json(evento, { status: 201 });
+    await marcador.save();
+    return NextResponse.json(marcador, { status: 201 });
   } catch (error) {
-    console.error("Error al crear el evento:", error);
+    console.error("Error al crear el marcador:", error);
     return NextResponse.json(
-      { error: "Error al crear el evento" },
+      { error: "Error al crear el marcador" },
       { status: 500 }
     );
   }
