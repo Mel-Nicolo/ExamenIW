@@ -21,7 +21,7 @@ interface Evento {
 }
 
 async function getEvento(id: string): Promise<Evento> {
-  const res = await fetch(`/api/event/${id}`, {
+  const res = await fetch(`/api/eventos/${id}`, {
     cache: 'no-store'
   });
   
@@ -53,7 +53,7 @@ export default function EventoDetalle({ params }: { params: Promise<{ id: string
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/event/${id}`, {
+      const res = await fetch(`/api/eventos/${id}`, {
         method: 'DELETE'
       });
 

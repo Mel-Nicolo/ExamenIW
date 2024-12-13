@@ -17,7 +17,7 @@ const userSchema = new Schema<UserDocument>(
       required: [true, "El email es necesario"],
       unique: true,
       match: [
-        /^\w+([.-]?\w+)@\w+([.-]?\w+)(.\w{2,3})+$/,
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "El email no tiene un formato válido",
       ]
     },

@@ -67,7 +67,7 @@ export default function Login() {
               Sign In with Google
             </button>
             <Link
-              href="/register"
+              href="/registro"
               className="text-sm text-[#888] transition duration-150 ease hover:text-black">
               Don't have an account?
             </Link>

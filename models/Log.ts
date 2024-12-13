@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const loginLogSchema = new mongoose.Schema({
+const LogSchema = new mongoose.Schema({
   timestamp: {
     type: Date,
     default: Date.now,
@@ -20,5 +20,5 @@ const loginLogSchema = new mongoose.Schema({
   }
 },{ versionKey: false });
 
-const LoginLog = mongoose.models?.LoginLog || mongoose.model("LoginLog", loginLogSchema);
-export default LoginLog;
+const Log = mongoose.models?.Log || mongoose.model("Log", LogSchema);
+export default Log;

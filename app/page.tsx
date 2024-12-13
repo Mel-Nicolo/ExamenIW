@@ -26,6 +26,39 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
 
+  const showSession = () => {
+    if (status === "authenticated") {
+      return (
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <h2>Bienvenido {session?.user?.name}</h2>
+          <img src={session?.user?.image ?? undefined} alt={session?.user?.name ?? ""} className="w-20 h-20 rounded-full" />
+          <button
+            className="border border-solid border-black rounded px-4 py-2"
+            onClick={() => {
+              signOut({ redirect: false }).then(() => {
+                router.push("/");
+              });
+            }}
+          >
+            Sign Out
+          </button>
+        </div>
+      )
+    } else if (status === "loading") {
+      return (
+        <span className="text-[#888] text-sm mt-7">Loading...</span>
+      )
+    } else {
+      return (
+        <Link
+          href="/login"
+          className="border border-solid border-black rounded px-4 py-2 mb-8"
+        >
+          Sign In
+        </Link>
+      )
+    }
+  }
 
   const searchEvents = async () => {
     try {
@@ -38,7 +71,7 @@ export default function Home() {
       if (geocodeData && geocodeData.length > 0) {
         const { lat, lon } = geocodeData[0];
         setLocation({ lat, lon });
-        const response = await fetch(`/api/event?lat=${lat}&lon=${lon}`);
+        const response = await fetch(`/api/eventos?lat=${lat}&lon=${lon}`);
         if (!response.ok) throw new Error('Error al cargar los eventos');
         
         const data = await response.json();
@@ -53,6 +86,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
+      {showSession()}
 
       <div className="w-full max-w-xl mb-8">
         <div className="flex gap-2">
@@ -60,7 +94,7 @@ export default function Home() {
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Introduce una direcciÃ³n"
+            placeholder="Introduce una dirección"
             className="flex-1 p-2 border rounded"
           />
           <button
@@ -81,7 +115,7 @@ export default function Home() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
         {events.map((event) => (
-          <Link href={`/event/${event._id}`} key={event._id}>
+          <Link href={`/eventos/${event._id}`} key={event._id}>
             <div className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
               <img 
                 src={event.imagen} 

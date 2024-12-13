@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Event from "@/models/Event";
+import Evento from "@/models/Evento";
 import { connectDB } from "@/lib/mongodb";
 import cloudinary from "@/lib/cloudinary";
 import { getServerSession } from "next-auth";
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     if (lat && lon) {
       // Búsqueda por proximidad (0.2 unidades de distancia)
-      const eventos = await Event.find({
+      const eventos = await Evento.find({
         lat: { $gte: Number(lat) - 0.2, $lte: Number(lat) + 0.2 },
         lon: { $gte: Number(lon) - 0.2, $lte: Number(lon) + 0.2 },
       }).sort({ timestamp: 1 });
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Si no hay coordenadas, devuelve todos los eventos
-    const eventos = await Event.find({}).sort({ timestamp: 1 });
+    const eventos = await Evento.find({}).sort({ timestamp: 1 });
     return NextResponse.json(eventos);
   } catch (error) {
     console.error("Error al obtener eventos:", error);
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     }
 
     // Crear el evento usando el email del usuario autenticado
-    const evento = new Event({
+    const evento = new Evento({
       nombre,
       timestamp,
       lugar,

@@ -4,19 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
-import LoginLog from "@/models/LoginLog";
-import NextAuth, { DefaultSession } from "next-auth"
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id?: string
-      token?: string
-    } & DefaultSession["user"]
-  }
-}
-
-
+import Log from "@/models/Log";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -39,7 +27,7 @@ export const authOptions: NextAuthOptions = {
 
         const isValid = await bcrypt.compare(credentials!.password, user.password);
         if (!isValid) {
-          throw new Error("ContraseÃ±a incorrecta");
+          throw new Error("Contraseña incorrecta");
         }
 
         return user;
@@ -74,13 +62,13 @@ export const authOptions: NextAuthOptions = {
         // Crear registro del login
         const expiryDate = new Date();
         expiryDate.setHours(expiryDate.getHours() + 24); // Token válido por 24h
-  
-        const loginLog = new LoginLog({
+
+        const loginLog = new Log({
           userEmail: user.email,
           expiryTimestamp: expiryDate,
           token: user.id // O puedes generar un token único
         });
-  
+
         await loginLog.save();
         return true;
       } catch (error) {
@@ -91,11 +79,10 @@ export const authOptions: NextAuthOptions = {
     async redirect({ url, baseUrl }) {
       return baseUrl;
     },
-    async session({ session, token }) {  // Cambiado para recibir token en lugar de user
+    async session({ session, token }) {
       if (token) {
         session.user = {
           ...session.user,
-          token: token.id as string,
           name: token.name,
           email: token.email,
           image: token.image as string,
@@ -115,5 +102,8 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: '/login',
+  },
+  session: {
+    maxAge: 24 * 60 * 60, // 24 hours
   },
 };

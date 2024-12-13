@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSession } from 'next-auth/react';
 
-const CrearEvent = () => {
+const CrearEvento = () => {
   const [nombre, setNombre] = useState('');
   const [timestamp, setTimestamp] = useState('');
   const [lugar, setLugar] = useState('');
@@ -38,7 +38,7 @@ const CrearEvent = () => {
         formData.append('imagen', imagen);
       }
 
-      const res = await fetch('/api/event', {
+      const res = await fetch('/api/eventos', {
         method: 'POST',
         body: formData,
       });
@@ -78,4 +78,4 @@ const CrearEvent = () => {
   );
 };
 
-export default CrearEvent;
+export default CrearEvento;

@@ -54,7 +54,7 @@ const EventMap: React.FC<MapProps> = ({ location, eventos }) => {
       style={{ height: "400px", width: "100%" }}
       scrollWheelZoom={true}
     >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png" />
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       {eventos.map((evento) => (
         <Marker
           key={evento._id}

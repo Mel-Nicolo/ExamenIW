@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import LoginLog from "@/models/LoginLog";
+import LoginLog from "@/models/Log";
 import { connectDB } from "@/lib/mongodb";
 
 export async function GET() {

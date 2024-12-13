@@ -14,7 +14,7 @@ export default function LogsPage() {
 
   useEffect(() => {
     async function fetchLogs() {
-      const response = await fetch('/api/logs');
+      const response = await fetch('/api/log');
       const data = await response.json();
       setLogs(data.sort((a: LoginLog, b: LoginLog) => 
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -31,7 +31,7 @@ export default function LogsPage() {
           Volver
         </Link>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
           <thead>

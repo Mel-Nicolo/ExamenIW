@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Event from "@/models/Event";
+import Evento from "@/models/Evento";
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -12,13 +12,13 @@ export async function GET(
   try {
     const { id } = await params;
     await connectDB();
-    const event = await Event.findById(id);
+    const evento = await Evento.findById(id);
 
-    if (!event) {
+    if (!evento) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(event);
+    return NextResponse.json(evento);
   } catch (error) {
     console.error("Error al obtener el evento:", error);
     return NextResponse.json({ error: "Error al obtener el evento" }, { status: 500 });
@@ -38,13 +38,13 @@ export async function PUT(
     const { id } = await params;
     await connectDB();
 
-    const event = await Event.findById(id);
-    if (!event) {
+    const evento = await Evento.findById(id);
+    if (!evento) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
     // Verificar que el usuario es el organizador
-    if (event.organizador !== session.user.email) {
+    if (evento.organizador !== session.user.email) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
     }
 
@@ -55,7 +55,7 @@ export async function PUT(
     const imagen = formData.get("imagen") as File;
 
     // Procesar nueva imagen si se proporciona
-    let imagenUrl = event.imagen;
+    let imagenUrl = evento.imagen;
     if (imagen) {
       const bytes = await imagen.arrayBuffer();
       const buffer = Buffer.from(bytes);
@@ -79,15 +79,15 @@ export async function PUT(
     const geocodeResponse = await fetch(geocodeUrl);
     const geocodeData = await geocodeResponse.json();
 
-    let lat = event.lat;
-    let lon = event.lon;
+    let lat = evento.lat;
+    let lon = evento.lon;
 
     if (geocodeData && geocodeData.length > 0) {
       lat = parseFloat(geocodeData[0].lat);
       lon = parseFloat(geocodeData[0].lon);
     }
 
-    const eventActualizado = await Event.findByIdAndUpdate(
+    const eventoActualizado = await Evento.findByIdAndUpdate(
       id,
       {
         nombre,
@@ -100,7 +100,7 @@ export async function PUT(
       { new: true }
     );
 
-    return NextResponse.json(eventActualizado);
+    return NextResponse.json(eventoActualizado);
   } catch (error) {
     console.error("Error al actualizar el evento:", error);
     return NextResponse.json(
@@ -123,17 +123,17 @@ export async function DELETE(
     const { id } = await params;
     await connectDB();
 
-    const event = await Event.findById(id);
-    if (!event) {
+    const evento = await Evento.findById(id);
+    if (!evento) {
       return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
     }
 
     // Verificar que el usuario es el organizador
-    if (event.organizador !== session.user.email) {
+    if (evento.organizador !== session.user.email) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
     }
 
-    await Event.findByIdAndDelete(id);
+    await Evento.findByIdAndDelete(id);
     return NextResponse.json({ message: "Evento eliminado correctamente" });
   } catch (error) {
     console.error("Error al eliminar el evento:", error);

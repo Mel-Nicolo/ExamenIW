@@ -1,19 +1,6 @@
 import mongoose from "mongoose";
 
-export interface EventDocument {
-  _id: string;
-  nombre: string;
-  timestamp: Date;
-  lugar: string;
-  lat: number;
-  lon: number;
-  organizador: string;
-  imagen: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const EventSchema = new mongoose.Schema(
+const EventoSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
@@ -50,5 +37,7 @@ const EventSchema = new mongoose.Schema(
   }
 );
 
-const Event = mongoose.models?.Event || mongoose.model<EventDocument>("Event", EventSchema);
-export default Event;
+const Evento =
+  mongoose.models?.Evento || mongoose.model("Evento", EventoSchema);
+
+export default Evento;
