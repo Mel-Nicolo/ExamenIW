@@ -13,7 +13,7 @@ export default function Navbar() {
           <Link href="/">Home</Link>
         </div>
         <div className="flex items-center space-x-4 ml-auto">
-          <Link href="/logs" className="text-white hover:underline">
+          <Link href="/log" className="text-white hover:underline">
             Logs
           </Link>
           {status === "authenticated" ? (
@@ -38,7 +38,7 @@ export default function Navbar() {
               <Link href="/login" className="text-white hover:underline">
                 Login
               </Link>
-              <Link href="/register" className="text-white hover:underline">
+              <Link href="/registro" className="text-white hover:underline">
                 Register
               </Link>
             </>
