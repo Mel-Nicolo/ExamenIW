@@ -2,10 +2,16 @@ import { connectDB } from "@/lib/mongodb";
 import Event from "@/models/Event";
 import { NextResponse } from "next/server";
 
+interface RouteContext {
+  params: {
+    id: string;
+  }
+}
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
-) {
+  { params }: RouteContext
+): Promise<NextResponse> {
   try {
     await connectDB();
     const event = await Event.findById(params.id);
