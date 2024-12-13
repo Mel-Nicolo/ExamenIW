@@ -37,7 +37,7 @@ export default function Home() {
     if (status === "authenticated") {
       if (searchEmail && searchEmail !== session?.user?.email) {
         // Si estamos visitando la página de otro usuario, registrar la visita
-        registerVisit(searchEmail, session.user.email);
+        registerVisit(searchEmail, session?.user?.email);
         fetchUserMarkers(searchEmail);
         fetchUserLogs(searchEmail);
       } else if (session.user?.email) {
