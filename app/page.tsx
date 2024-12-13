@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -117,6 +117,7 @@ export default function Home() {
   }
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <main className="flex min-h-screen flex-col items-center p-8">
       {showSession()}
 
@@ -173,5 +174,6 @@ export default function Home() {
         </div>
       )}
     </main>
+    </Suspense>
   );
 }
