@@ -6,10 +6,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const resolvedParams = await Promise.resolve(params);
   try {
     await connectDB();
-    const event = await Event.findById(resolvedParams.id);
+    const event = await Event.findById(params.id);
 
     if (!event) {
       return NextResponse.json(
